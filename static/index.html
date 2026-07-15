@@ -3,53 +3,197 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Simple Chatbot</title>
+    <title>Portfolio — Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-      body{font-family:Arial,Helvetica,sans-serif;margin:2rem}
-      #messages{border:1px solid #ccc;padding:1rem;height:300px;overflow:auto}
-      .user{color:blue}
-      .bot{color:green}
+      :root{
+        --bg:#0f1724; --panel:#0b1220; --muted:#94a3b8; --accent:#60a5fa; --card:#0b1226; --glass:rgba(255,255,255,0.03);
+        --user:#0369a1; --bot:#111827;
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{font-family:Inter,system-ui,Segoe UI,Arial;margin:0;background:linear-gradient(180deg,#071029 0%, #071827 60%);color:#e6eef8;-webkit-font-smoothing:antialiased;padding:28px}
+      a{color:var(--accent)}
+      .container{max-width:1100px;margin:0 auto}
+      header.site-header{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+      .brand h1{font-size:20px;margin:0;color:#ffffff}
+      .brand p{margin:0;color:#cbd5e1;font-size:13px}
+      nav.site-nav a{margin-left:14px;text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:8px;transition:all .18s}
+      nav.site-nav a:hover{background:var(--glass);color:var(--accent)}
+
+      main.site-main{display:grid;grid-template-columns:1fr 340px;gap:28px;margin-top:18px}
+      .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:12px;box-shadow:0 6px 24px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.02)}
+      .card h2{margin-top:0;color:#ffffff}
+      .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+      .project{padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.04);transition:transform .18s,box-shadow .18s}
+      .project:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(2,6,23,0.7)}
+      aside.sticky{position:sticky;top:20px}
+      footer{color:var(--muted);text-align:center;margin-top:28px}
+
+      /* Chat widget */
+      #chatWidget{right:20px;bottom:20px}
+      #chatToggle{width:56px;height:56px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--accent),#3b82f6);color:#fff;cursor:pointer;box-shadow:0 12px 40px rgba(3,105,161,0.18);display:flex;align-items:center;justify-content:center;font-size:20px}
+      #chatPanel{width:360px;height:520px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#071827, #041022);border:1px solid rgba(255,255,255,0.04)}
+      #chatPanel .header{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;color:#e6eef8}
+      #chatPanel .messages{height:360px;padding:12px;overflow:auto}
+      .bubble{display:inline-block;padding:10px 14px;border-radius:14px;margin:8px 0;max-width:78%;position:relative}
+      .user{background:linear-gradient(90deg,var(--accent),#3b82f6);color:#ffffff;border-bottom-right-radius:6px;margin-left:auto;text-align:right}
+      .bot{background:#0b1226;color:#e6eef8;border-bottom-left-radius:6px;text-align:left}
+      .meta{display:block;font-size:11px;color:#9fb2cc;margin-top:6px}
+      input.chat-input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8}
+      button.btn{background:linear-gradient(90deg,var(--accent),#3b82f6);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+
+      @media (max-width:900px){
+        main.site-main{grid-template-columns:1fr}
+        #chatPanel{width:calc(100vw - 40px);right:10px}
+      }
     </style>
   </head>
   <body>
-    <h1>Simple Chatbot</h1>
-    <div id="messages"></div>
-    <form id="chatForm">
-      <input id="msg" autocomplete="off" placeholder="Type a message" style="width:70%" />
-      <button>Send</button>
-    </form>
+    <header style="max-width:1100px;margin:0 auto;padding:28px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div class="brand">
+        <h1 style="margin:0;font-size:20px">Sajin Ghimire</h1>
+        <p style="margin:0;color:#cbd5e1">Full-stack developer • Cloud engineer • Open-source contributor</p>
+      </div>
+      <nav>
+        <a href="#about" style="margin-right:12px;color:#0b93f6;text-decoration:none">About</a>
+        <a href="#projects" style="margin-right:12px;color:#0b93f6;text-decoration:none">Projects</a>
+        <a href="#contact" style="color:#0b93f6;text-decoration:none">Contact</a>
+      </nav>
+    </header>
+
+    <main style="max-width:1100px;margin:18px auto;padding:20px;display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start">
+      <section>
+        <section id="about" class="card" style="margin-bottom:18px">
+          <h2>About</h2>
+          <p style="color:#cbd5e1;line-height:1.5">Hello — I'm Sajin Ghimire, a full-stack developer and cloud engineer with 6+ years building scalable web applications and developer tools. I specialize in JavaScript/TypeScript, Python, and deploying production services to cloud providers. I enjoy designing intuitive UX, contributing to open-source, and mentoring junior engineers.</p>
+          <p style="color:#cbd5e1"><strong>Skills:</strong> React, Node.js, Flask, Docker, Kubernetes, Azure, AWS, SQL/NoSQL, CI/CD, Testing</p>
+        </section>
+
+        <section id="projects" class="card">
+          <h2>Projects</h2>
+          <div class="projects-grid">
+            <article class="project">
+              <strong>Cloud Notes</strong>
+              <div style="color:#cbd5e1;font-size:14px;margin-top:6px">A collaborative note-taking app with real-time sync and offline support, built with React and Firebase. I led the frontend and offline sync design.</div>
+            </article>
+            <article class="project">
+              <strong>DeployKit</strong>
+              <div style="color:#cbd5e1;font-size:14px;margin-top:6px">CLI tooling to standardize container builds and deployments across teams using Docker and GitHub Actions. Implemented reusable workflows and templates.</div>
+            </article>
+            <article class="project">
+              <strong>Insights Dashboard</strong>
+              <div style="color:#cbd5e1;font-size:14px;margin-top:6px">An internal analytics dashboard for monitoring application health and cost metrics, using Python, PostgreSQL, and Chart.js.</div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <aside>
+        <div style="position:sticky;top:20px;">
+
+          <div class="card" style="margin-bottom:16px">
+            <h3 style="margin:0 0 8px 0;color:#ffffff">Quick Info</h3>
+            <p style="margin:0;color:#cbd5e1">Kathmandu, Nepal • Open to remote roles • Available for contract and full-time</p>
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 8px 0;color:#ffffff">Contact</h3>
+            <p style="margin:0 0 8px 0;color:#cbd5e1">Email: sajin.ghimire@example.com<br>GitHub: github.com/sajin-ghimire<br>LinkedIn: linkedin.com/in/sajin-ghimire</p>
+            <div style="margin-top:10px">
+              <button id="openChat" style="background:linear-gradient(90deg,var(--accent),#3b82f6);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer">Open Assistant</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer style="text-align:center;color:#94a3b8;padding:28px 10px">© 2026 Your Name</footer>
+
+    <!-- Floating chat widget -->
+    <div id="chatWidget" style="position:fixed;right:20px;bottom:20px;z-index:9999">
+      <button id="chatToggle" aria-label="Open chat" style="width:56px;height:56px;border-radius:50%;border:none;background:#0b93f6;color:#fff;box-shadow:0 6px 18px rgba(11,147,246,.24);cursor:pointer;font-size:20px">💬</button>
+
+      <div id="chatPanel" style="display:none;width:360px;max-width:calc(100vw - 40px);height:520px;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(2,6,23,.2);overflow:hidden;margin-bottom:12px;">
+        <div style="padding:12px;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center">
+          <strong>Assistant</strong>
+          <button id="closeChat" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button>
+        </div>
+        <div id="messages" class="messages" style="height:380px;padding:12px;overflow:auto;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.02))" aria-live="polite"></div>
+        <div id="typing" class="typing" style="display:none;padding:8px 12px;color:#6b7280">Bot is typing...</div>
+        <form id="chatForm" style="display:flex;gap:8px;padding:12px;border-top:1px solid #eef2f6">
+          <input id="msg" autocomplete="off" placeholder="Ask the assistant" style="flex:1;padding:10px;border-radius:8px;border:1px solid #e6eef8" />
+          <button type="button" id="clearBtn" style="background:#fff;border:1px solid #e6eef8;padding:8px 10px;border-radius:8px;cursor:pointer">Clear</button>
+          <button type="submit" style="background:#0b93f6;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <style>
+      /* reuse bubble styles */
+      .bubble{display:inline-block;padding:10px 14px;border-radius:14px;margin:8px 0;max-width:78%;position:relative}
+      .meta{display:block;font-size:11px;color:#667085;margin-top:6px}
+      .user{background:#0b93f6;color:#fff;border-bottom-right-radius:4px;margin-left:auto;text-align:right}
+      .bot{background:#e5e5ea;color:#111;border-bottom-left-radius:4px;text-align:left}
+      .timestamp{font-size:11px;color:#94a3b8;margin-left:8px}
+    </style>
+
     <script>
+      // Widget open/close
+      const chatToggle = document.getElementById('chatToggle');
+      const chatPanel = document.getElementById('chatPanel');
+      const closeChat = document.getElementById('closeChat');
+      const openChatBtn = document.getElementById('openChat');
+
+      chatToggle.addEventListener('click', () => { chatPanel.style.display = chatPanel.style.display === 'none' ? 'block' : 'none'; });
+      closeChat.addEventListener('click', () => { chatPanel.style.display = 'none'; });
+      openChatBtn.addEventListener('click', () => { chatPanel.style.display = 'block'; window.scrollTo({top:0,behavior:'smooth'}); });
+
+      // Chat logic (reuses existing handlers)
       const form = document.getElementById('chatForm');
       const msgInput = document.getElementById('msg');
-      const messages = document.getElementById('messages');
+      const messages = document.querySelector('#chatPanel #messages');
+      const typingEl = document.getElementById('typing');
+      const clearBtn = document.getElementById('clearBtn');
+
+      function nowTS(){
+        const d = new Date();
+        return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
 
       function addMessage(text, cls){
-        const div = document.createElement('div');
-        div.className = cls;
-        div.textContent = text;
-        messages.appendChild(div);
+        const wrap = document.createElement('div');
+        wrap.className = cls + ' bubble';
+        const txt = document.createElement('div');
+        txt.textContent = text;
+        const meta = document.createElement('span');
+        meta.className = 'meta';
+        meta.innerHTML = '<span class="timestamp">' + nowTS() + '</span>';
+        wrap.appendChild(txt);
+        wrap.appendChild(meta);
+        messages.appendChild(wrap);
         messages.scrollTop = messages.scrollHeight;
       }
+
+      function setTyping(on){ typingEl.style.display = on ? 'block' : 'none'; if(on) messages.scrollTop = messages.scrollHeight; }
+
+      clearBtn.addEventListener('click', () => { messages.innerHTML = ''; msgInput.focus(); });
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const text = msgInput.value.trim();
         if(!text) return;
-        addMessage('You: ' + text, 'user');
+        addMessage(text, 'user');
         msgInput.value = '';
-
+        setTyping(true);
         try{
-          const res = await fetch('/chat', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({message: text})
-          });
+          const res = await fetch('/chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({message: text}) });
           const data = await res.json();
-          addMessage('Bot: ' + (data.reply || ''), 'bot');
-        }catch(err){
-          addMessage('Error: ' + err.message, 'bot');
-        }
+          setTimeout(()=>{ setTyping(false); addMessage(data.reply || 'No response', 'bot'); }, 300);
+        }catch(err){ setTyping(false); addMessage('Error: ' + err.message, 'bot'); }
       });
+
+      msgInput.addEventListener('keydown', (e) => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); } });
     </script>
   </body>
 </html>
